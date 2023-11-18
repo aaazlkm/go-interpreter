@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"fmt"
+
 	"github.com/aaazlkm/go-interpreter/token"
 )
 
@@ -40,6 +42,17 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		tk.Literal = ""
 		tk.Type = token.EOF
+	default:
+		fmt.Printf("fmt %s", string(l.ch))
+		if isLetter(l.ch) {
+			fmt.Printf("isLetter true %s", string(l.ch))
+			tk.Literal = l.readIdentifier()
+			tk.Type = token.LookupIdent(tk.Literal)
+			return tk // すでにreadIdentifierが呼ばれているため
+		} else {
+			fmt.Printf("isLetter false %s", string(l.ch))
+			tk = newToken(token.ILLEGAL, l.ch)
+		}
 	}
 
 	l.readChar()
@@ -61,4 +74,16 @@ func (l *Lexer) readChar() {
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
+}
+
+func (l *Lexer) readIdentifier() string {
+	prev := l.position
+	for isLetter(l.ch) {
+		l.readChar()
+	}
+	return l.input[prev:l.position]
+}
+
+func isLetter(b byte) bool {
+	return 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' || b == '_'
 }

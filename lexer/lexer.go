@@ -22,6 +22,8 @@ func New(input string) *Lexer {
 func (l *Lexer) NextToken() token.Token {
 	var tk token.Token
 
+	l.skipWhiteSpace()
+
 	switch l.ch {
 	case '=':
 		tk = newToken(token.ASSIGN, l.ch)
@@ -63,6 +65,12 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{
 		Type:    tokenType,
 		Literal: string(ch),
+	}
+}
+
+func (l *Lexer) skipWhiteSpace() {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		l.readChar()
 	}
 }
 

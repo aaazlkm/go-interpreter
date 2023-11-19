@@ -1,8 +1,6 @@
 package lexer
 
 import (
-	"fmt"
-
 	"github.com/aaazlkm/go-interpreter/token"
 )
 
@@ -45,14 +43,15 @@ func (l *Lexer) NextToken() token.Token {
 		tk.Literal = ""
 		tk.Type = token.EOF
 	default:
-		fmt.Printf("fmt %s", string(l.ch))
 		if isLetter(l.ch) {
-			fmt.Printf("isLetter true %s", string(l.ch))
 			tk.Literal = l.readIdentifier()
 			tk.Type = token.LookupIdent(tk.Literal)
-			return tk // すでにreadIdentifierが呼ばれているため
+			return tk // すでにreadIdentifierが呼ばれているため、ここでreturnする
+		} else if isDigit(l.ch) {
+			tk.Literal = l.readNumber()
+			tk.Type = token.INT
+			return tk // すでにreadNumberが呼ばれているため、ここでreturnする
 		} else {
-			fmt.Printf("isLetter false %s", string(l.ch))
 			tk = newToken(token.ILLEGAL, l.ch)
 		}
 	}
@@ -61,6 +60,7 @@ func (l *Lexer) NextToken() token.Token {
 	return tk
 }
 
+// 新しいトークンを作成する
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{
 		Type:    tokenType,
@@ -68,12 +68,14 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	}
 }
 
+// 空白をスキップする
 func (l *Lexer) skipWhiteSpace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
+// 1文字読み込む
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
@@ -84,6 +86,7 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1
 }
 
+// 英字を読み込む
 func (l *Lexer) readIdentifier() string {
 	prev := l.position
 	for isLetter(l.ch) {
@@ -92,6 +95,21 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[prev:l.position]
 }
 
+// 英字かどうか
 func isLetter(b byte) bool {
 	return 'a' <= b && b <= 'z' || 'A' <= b && b <= 'Z' || b == '_'
+}
+
+// intを読み込む
+func (l *Lexer) readNumber() string {
+	prev := l.position
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+	return l.input[prev:l.position]
+}
+
+// intかどうか
+func isDigit(b byte) bool {
+	return b >= '0' && b <= '9'
 }

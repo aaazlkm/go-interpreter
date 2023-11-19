@@ -41,7 +41,6 @@ func TestNextToken(t *testing.T) {
 		{token.IDENT, "y"},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},
-		{token.IDENT, "return"},
 		{token.IDENT, "x"},
 		{token.PLUS, "+"},
 		{token.IDENT, "y"},
@@ -58,7 +57,7 @@ func TestNextToken(t *testing.T) {
 		{token.COMMA, ","},
 		{token.IDENT, "ten"},
 		{token.RPAREN, ")"},
-
+		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
 

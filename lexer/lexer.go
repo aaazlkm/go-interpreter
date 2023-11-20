@@ -1,8 +1,6 @@
 package lexer
 
 import (
-	"fmt"
-
 	"github.com/aaazlkm/go-interpreter/token"
 )
 
@@ -26,7 +24,15 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		tk = newToken(token.ASSIGN, l.ch)
+		// TODO = ! == !=の判定はdefaultでまとめるとよさそう
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tk.Literal = string(ch) + string(l.ch)
+			tk.Type = token.EQ
+		} else {
+			tk = newToken(token.ASSIGN, l.ch)
+		}
 	case ';':
 		tk = newToken(token.SEMICOLON, l.ch)
 	case '(':
@@ -40,7 +46,14 @@ func (l *Lexer) NextToken() token.Token {
 	case '-':
 		tk = newToken(token.MINUS, l.ch)
 	case '!':
-		tk = newToken(token.BANG, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tk.Literal = string(ch) + string(l.ch)
+			tk.Type = token.NOT_EQ
+		} else {
+			tk = newToken(token.BANG, l.ch)
+		}
 	case '*':
 		tk = newToken(token.ASTERISK, l.ch)
 	case '/':
@@ -70,8 +83,6 @@ func (l *Lexer) NextToken() token.Token {
 		}
 	}
 
-	fmt.Printf("NextToken: %v\n", tk)
-
 	l.readChar()
 	return tk
 }
@@ -100,6 +111,15 @@ func (l *Lexer) readChar() {
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
+}
+
+// 次の文字を見る
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
+	}
 }
 
 // 英字を読み込む

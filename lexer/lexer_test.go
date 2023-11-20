@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/aaazlkm/go-interpreter/token"
@@ -19,6 +20,8 @@ func TestNextToken(t *testing.T) {
 		} else {
 			return false;
 		}
+		10 == 10;
+		10 != 9;
 	`
 
 	tests := []struct {
@@ -101,6 +104,16 @@ func TestNextToken(t *testing.T) {
 		{token.FALSE, "false"},
 		{token.SEMICOLON, ";"},
 		{token.RBRACE, "}"},
+		// 10 == 10;
+		// 10 != 9;
+		{token.INT, "10"},
+		{token.EQ, "=="},
+		{token.INT, "10"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "10"},
+		{token.NOT_EQ, "!="},
+		{token.INT, "9"},
+		{token.SEMICOLON, ";"},
 		// EOF
 		{token.EOF, ""},
 	}
@@ -109,6 +122,8 @@ func TestNextToken(t *testing.T) {
 
 	for i, tt := range tests {
 		tok := l.NextToken()
+
+		fmt.Printf("NextToken: %v\n", tok)
 
 		if tok.Type != tt.expectedType {
 			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q]", i, tt.expectedType, tok.Type)

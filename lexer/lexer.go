@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"fmt"
+
 	"github.com/aaazlkm/go-interpreter/token"
 )
 
@@ -148,4 +150,8 @@ func (l *Lexer) readNumber() string {
 // intかどうか
 func isDigit(b byte) bool {
 	return b >= '0' && b <= '9'
+}
+
+func (l *Lexer) LogInfo() {
+	fmt.Printf("input: %v\n position: %v\n readPosition: %v\n ch: %v\n", l.input, l.position, l.readPosition, l.ch)
 }

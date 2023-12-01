@@ -1,0 +1,49 @@
+# 方針
+# - 基本的には全てのルールを有効にする。
+# - 無効にしたいルールは個別に無効にし、理由をコメントに残す。
+# - この方針により、常に最新のルールセットを使うことができる & 無効の理由をコード状に残すことができる
+
+run:
+  allow-parallel-runners: true
+
+output:
+  format: colored-line-number
+  sort-results: true
+
+linters:
+  # 基本全て有効にする。無効にしたいものは個別に無効し理由をコメントに残す。
+  enable-all: true
+  fast: false # 全てのlinterを実行したいのでfalse
+
+linters-settings:
+  varnamelen:
+    ignore-decls:
+      - c echo.Context
+      - t testing.T
+      - e error
+      - i int
+      - const C
+      - T any
+      - m map[string]int
+      - f *foo.Bar
+      - w http.ResponseWriter
+      - r *http.Requests
+
+issues:
+  # CIで実行するときはtrueにする。
+  new: false
+  include:
+    - EXC0001
+    - EXC0003
+    - EXC0004
+    - EXC0005
+    - EXC0006
+    - EXC0007
+    - EXC0008
+    - EXC0009
+    - EXC0010
+    - EXC0011
+    - EXC0012
+    - EXC0013
+    - EXC0014
+    - EXC0015
